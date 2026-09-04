@@ -20,3 +20,19 @@ test("the register route shows the complete sign-up form", () => {
   expect(screen.queryByLabelText("Confirm Password")).not.toBeNull();
   expect(screen.queryByRole("button", { name: "Register" })).not.toBeNull();
 });
+
+test("the dealerships route shows the dealer directory", async () => {
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({ status: 200, dealers: [] }),
+  });
+
+  render(
+    <MemoryRouter initialEntries={["/dealers"]}>
+      <App />
+    </MemoryRouter>,
+  );
+
+  expect(await screen.findByRole("heading", { name: "Find a dealership" })).not.toBeNull();
+  expect(await screen.findByText("No dealerships were found for this state.")).not.toBeNull();
+});

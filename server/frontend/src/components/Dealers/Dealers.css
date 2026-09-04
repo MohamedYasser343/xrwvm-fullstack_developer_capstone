@@ -1,88 +1,234 @@
-table{
-    margin:5px;
-    padding:10px;
-    border: grey solid 1px;
-    width:100%
-  }
-  
-  td{
-    padding:10px;
-    align-self: center;
-    border:solid grey .5px;
-    text-align: center;
-    font-size: large;
-  }
-  
-  .review_panel{
-    display: flex;
+.dealers-page,
+.dealer-page,
+.review-form-page {
+  min-height: 100vh;
+  background: #f4f7fb;
+  color: #172033;
+}
+
+.dealers-shell {
+  max-width: 1180px;
+}
+
+.dealers-heading,
+.dealer-summary {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  margin-bottom: 0.35rem;
+  color: #0b7285;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dealers-heading h1,
+.dealer-summary h1,
+.review-form-card h1,
+.auth-callout h1 {
+  margin-bottom: 0.5rem;
+  color: #132238;
+  font-weight: 750;
+}
+
+.state-filter {
+  min-width: 210px;
+}
+
+.state-filter label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.dealer-table-wrap {
+  overflow: hidden;
+  border: 1px solid #dce3ed;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 14px 35px rgba(24, 42, 72, 0.08);
+}
+
+.dealer-table th {
+  padding: 1rem;
+  border-bottom: 1px solid #dce3ed;
+  background: #edf3fa;
+  color: #40516a;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dealer-table td {
+  padding: 1rem;
+  border-color: #edf1f6;
+}
+
+.dealer-name {
+  color: #075985;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.dealer-name:hover {
+  text-decoration: underline;
+}
+
+.state-badge {
+  display: inline-block;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #075985;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.review-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #0b7285;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.review-link img {
+  width: 26px;
+}
+
+.status-message {
+  padding: 2rem;
+  border: 1px dashed #b8c4d4;
+  border-radius: 0.9rem;
+  background: white;
+  color: #52627a;
+  text-align: center;
+}
+
+.dealer-summary {
+  padding: 2rem;
+  border-radius: 1rem;
+  background: linear-gradient(130deg, #0f4c5c, #087f8c);
+  color: white;
+  box-shadow: 0 16px 36px rgba(15, 76, 92, 0.2);
+}
+
+.dealer-summary h1,
+.dealer-summary .eyebrow {
+  color: white;
+}
+
+.dealer-address {
+  margin: 0;
+  color: #d5f1f4;
+}
+
+.reviews-title {
+  margin: 2.5rem 0 1rem;
+  font-size: 1.35rem;
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.25rem;
+}
+
+.review-grid .review-card {
+  margin: 0;
+  border: 1px solid #dce3ed;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(24, 42, 72, 0.07);
+}
+
+.sentiment {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #52627a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.sentiment img {
+  width: 34px;
+}
+
+.review-copy {
+  min-height: 5rem;
+  margin: 1.25rem 0 1.5rem;
+  color: #27364d;
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+.reviewer-name {
+  margin: 0;
+  font-weight: 750;
+}
+
+.review-car {
+  margin: 0.2rem 0 0;
+  color: #69798f;
+  font-size: 0.88rem;
+}
+
+.review-form-card,
+.auth-callout {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid #dce3ed;
+  border-radius: 1.2rem;
+  background: white;
+  box-shadow: 0 16px 40px rgba(24, 42, 72, 0.09);
+}
+
+.review-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.review-form-grid > div:last-child {
+  grid-column: 1 / -1;
+  max-width: calc(50% - 0.625rem);
+}
+
+.review-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.auth-callout {
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .dealers-heading,
+  .dealer-summary {
+    align-items: stretch;
     flex-direction: column;
-    border: solid grey;
-    position: relative;
-    height:7cm;
-    width:6cm;
-    overflow-y: scroll;
-    padding:.3cm;
-    padding-top: 0%;
-    border-radius:10px; 
-    box-shadow: 0px 1px 12px rgba(0, 0, 0, 0.5);
-    margin-bottom: .5cm;
-    justify-content: space-between;
   }
 
-  .postreview{
-    margin:20px;
-    padding:10px;
-    font-size: larger;
+  .state-filter,
+  .review-form-grid > div:last-child {
+    width: 100%;
+    max-width: none;
   }
 
-  th{
-    padding:5px;
-    align-self: center;
-    text-align: center;
-    font-size: large;
-    margin-bottom: 1cm;
-    vertical-align: middle;
-    color: black;
+  .review-form-grid {
+    grid-template-columns: 1fr;
   }
-
-  .reviews_panel {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    column-gap: 1cm;
-    overflow-wrap: normal;
-    margin-top: 1cm;
-    align-items: flex-start;
-  }
-
-  .reviewer {
-    margin: 10px; /* Optional margin for spacing */
-    font-style: italic;
-    color: gray;
-    font-size: small;
-}
-
-.review {
-  margin-top: 1.5cm;
-}
-
-.emotion_icon {
-  align-self: center;
-  position:fixed;
-    width:40px;
-    height:40px;
-    background-color:#0C9;
-    color:#FFF;
-    border-radius:50px;
-    text-align:center;
-    box-shadow: 2px 2px 3px #999;  
-}
-
-.review_icon {
-  width:40px;
-}
-
-.review_icon:hover {
-  transform: scale(1.1);
-  border: solid lightgray;
 }

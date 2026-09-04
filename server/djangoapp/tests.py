@@ -76,6 +76,14 @@ class StaticPageRouteTests(SimpleTestCase):
                 self.assertTemplateUsed(response, "index.html")
                 self.assertContains(response, '<div id="root"></div>', html=True)
 
+    def test_react_dealership_pages_use_the_production_client(self):
+        for url in ("/dealers", "/dealer/3", "/postreview/3"):
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 200)
+                self.assertTemplateUsed(response, "index.html")
+                self.assertContains(response, '<div id="root"></div>', html=True)
+
 
 class UserManagementEndpointTests(TestCase):
     def setUp(self):

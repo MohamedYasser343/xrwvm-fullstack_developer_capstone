@@ -51,6 +51,12 @@ test('GET /fetchReviews/dealer/29 returns only dealer 29 reviews', async () => {
   assert.ok(body.every((review) => review.dealership === 29));
 });
 
+test('GET /fetchReviews/dealer/:id returns newest reviews first', async () => {
+  const body = await getJson('/fetchReviews/dealer/2');
+
+  assert.deepEqual(body.map((review) => review.id), [46, 19]);
+});
+
 test('GET /fetchDealers returns every dealership', async () => {
   const body = await getJson('/fetchDealers');
 

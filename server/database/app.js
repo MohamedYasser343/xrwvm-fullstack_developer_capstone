@@ -32,7 +32,8 @@ function createApp({ Dealerships: DealershipModel, Reviews: ReviewModel }) {
 
   app.get('/fetchReviews/dealer/:id', async (req, res) => {
     try {
-      res.json(await ReviewModel.find({ dealership: Number(req.params.id) }));
+      const reviews = await ReviewModel.find({ dealership: Number(req.params.id) });
+      res.json([...reviews].sort((first, second) => second.id - first.id));
     } catch (error) {
       res.status(500).json({ error: 'Error fetching documents' });
     }
