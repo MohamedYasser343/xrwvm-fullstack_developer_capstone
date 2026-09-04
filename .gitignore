@@ -103,6 +103,7 @@ celerybeat.pid
 
 # Environments
 .env
+k8s/base/secrets.env
 .venv
 env/
 venv/
