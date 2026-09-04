@@ -8,12 +8,14 @@ import requests
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
 from django.core.exceptions import ValidationError
 from django.apps import apps
 from django.test import SimpleTestCase, TestCase
 
 from . import restapis
 from .config import env_bool, env_list
+from .models import CarMake, CarModel
 
 
 class EnvironmentConfigurationTests(SimpleTestCase):
@@ -29,6 +31,15 @@ class EnvironmentConfigurationTests(SimpleTestCase):
     def test_environment_helpers_use_defaults(self):
         self.assertFalse(env_bool("FEATURE_FLAG"))
         self.assertEqual(env_list("HOSTS", ["localhost"]), ["localhost"])
+
+
+class SeedCarsCommandTests(TestCase):
+    def test_seed_cars_is_idempotent(self):
+        call_command("seed_cars")
+        call_command("seed_cars")
+
+        self.assertEqual(CarMake.objects.count(), 2)
+        self.assertEqual(CarModel.objects.count(), 2)
 
 
 class StaticPageConfigurationTests(SimpleTestCase):

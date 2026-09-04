@@ -297,7 +297,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     DJANGO_DEBUG=false \
     DJANGO_DB_PATH=/data/db.sqlite3
 WORKDIR /app
-RUN groupadd --gid 10001 app && useradd --uid 10001 --gid app --no-create-home app \
+RUN groupadd --gid 10001 app && useradd --uid 10001 --gid app --create-home app \
     && mkdir /data && chown app:app /data
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
@@ -581,7 +581,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     NLTK_DATA=/app
 WORKDIR /app
-RUN groupadd --gid 10001 app && useradd --uid 10001 --gid app --no-create-home app
+RUN groupadd --gid 10001 app && useradd --uid 10001 --gid app --create-home app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 COPY --chown=app:app app.py ./
