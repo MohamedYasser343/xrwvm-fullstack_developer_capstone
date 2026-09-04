@@ -1,0 +1,58 @@
+name: Lint Code
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint_python:
+    name: Lint Python Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install Flake8
+        run: python -m pip install flake8==7.3.0
+
+      - name: Lint Python files
+        run: >-
+          flake8 server
+          --max-line-length=100
+          --extend-exclude=server/.venv,server/frontend/node_modules,server/database/node_modules,server/djangoapp/migrations
+
+  lint_js:
+    name: Lint JavaScript Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Install React dependencies
+        run: npm ci --prefix server/frontend
+
+      - name: Lint React files
+        run: npm run lint --prefix server/frontend
+
+      - name: Install Express dependencies
+        run: npm ci --prefix server/database
+
+      - name: Lint Express files
+        run: npm run lint --prefix server/database
