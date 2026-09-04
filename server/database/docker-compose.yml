@@ -13,6 +13,7 @@ services:
 
   # Node api service
   api:
+    build: .
     image: nodeapp
     ports:
       - 3030:3030
