@@ -10,3 +10,18 @@ class StaticPageConfigurationTests(SimpleTestCase):
 
         self.assertIn(frontend_static, settings.TEMPLATES[0]["DIRS"])
         self.assertIn(frontend_static, settings.STATICFILES_DIRS)
+
+
+class StaticPageRouteTests(SimpleTestCase):
+    def test_home_about_and_contact_pages_are_available(self):
+        pages = {
+            "/": "Home.html",
+            "/about": "About.html",
+            "/contact": "Contact.html",
+        }
+
+        for url, template_name in pages.items():
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 200)
+                self.assertTemplateUsed(response, template_name)
