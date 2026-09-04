@@ -1,6 +1,11 @@
+from pathlib import Path
+
 from flask import Flask
+import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
-import json
+
+
+nltk.data.path.insert(0, str(Path(__file__).resolve().parent))
 app = Flask("Sentiment Analyzer")
 
 sia = SentimentIntensityAnalyzer()
@@ -14,21 +19,16 @@ def home():
 
 @app.get('/analyze/<input_txt>')
 def analyze_sentiment(input_txt):
-
     scores = sia.polarity_scores(input_txt)
-    print(scores)
     pos = float(scores['pos'])
     neg = float(scores['neg'])
     neu = float(scores['neu'])
     res = "positive"
-    print("pos neg nue ", pos, neg, neu)
     if (neg > pos and neg > neu):
         res = "negative"
     elif (neu > neg and neu > pos):
         res = "neutral"
-    res = json.dumps({"sentiment": res})
-    print(res)
-    return res
+    return {"sentiment": res}
 
 
 if __name__ == "__main__":
