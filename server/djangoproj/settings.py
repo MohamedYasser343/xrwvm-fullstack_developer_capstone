@@ -17,6 +17,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_STATIC_DIR = BASE_DIR / "frontend" / "static"
+FRONTEND_BUILD_DIR = BASE_DIR / "frontend" / "build"
 
 
 # Quick-start development settings - unsuitable for production
@@ -62,7 +63,7 @@ ROOT_URLCONF = 'djangoproj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [FRONTEND_STATIC_DIR],
+        'DIRS': [FRONTEND_STATIC_DIR, FRONTEND_BUILD_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -135,4 +136,4 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATICFILES_DIRS = [FRONTEND_STATIC_DIR]
+STATICFILES_DIRS = [FRONTEND_STATIC_DIR, FRONTEND_BUILD_DIR / "static"]
