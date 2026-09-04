@@ -15,7 +15,8 @@ This change will:
 - add reproducible JavaScript lint scripts and the minimum required lint
   dependency/configuration to the existing npm packages;
 - fix existing lint violations that prevent the new workflow from passing;
-- preserve application routes, payloads, dependencies, and runtime behavior.
+- preserve application routes, payloads, runtime dependencies, and runtime
+  behavior.
 
 It will not add deployment jobs, change application behavior, upgrade unrelated
 dependencies, or push changes to GitHub.
