@@ -3,6 +3,7 @@ const { after, before, test } = require('node:test');
 
 const dealerships = require('./data/dealerships.json').dealerships;
 const reviews = require('./data/reviews.json').reviews;
+const { createApp, seedDatabase } = require('./app');
 
 function modelFor(documents) {
   return {
@@ -18,7 +19,6 @@ let baseUrl;
 let server;
 
 before(async () => {
-  const { createApp } = require('./app');
   const app = createApp({
     Dealerships: modelFor(dealerships),
     Reviews: modelFor(reviews),
@@ -81,4 +81,26 @@ test('GET /fetchDealers/All returns every dealership', async () => {
   const body = await getJson('/fetchDealers/All');
 
   assert.equal(body.length, dealerships.length);
+});
+
+test('seedDatabase preserves populated collections', async () => {
+  const model = {
+    countDocuments: async () => 1,
+    insertMany: async () => assert.fail('must not replace existing records'),
+  };
+
+  await seedDatabase({ ReviewModel: model, DealershipModel: model });
+});
+
+test('seedDatabase initializes empty collections', async () => {
+  const inserted = [];
+  const model = {
+    countDocuments: async () => 0,
+    insertMany: async (documents) => inserted.push(documents),
+  };
+
+  await seedDatabase({ ReviewModel: model, DealershipModel: model });
+
+  assert.equal(inserted.length, 2);
+  assert.ok(inserted.every((documents) => documents.length > 0));
 });

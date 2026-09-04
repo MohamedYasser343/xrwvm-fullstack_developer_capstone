@@ -88,7 +88,16 @@ function createApp({ Dealerships: DealershipModel, Reviews: ReviewModel }) {
   return app;
 }
 
-async function seedDatabase() {
+async function seedCollection(Model, documents) {
+  if (await Model.countDocuments() === 0) {
+    await Model.insertMany(documents);
+  }
+}
+
+async function seedDatabase({
+  ReviewModel = Reviews,
+  DealershipModel = Dealerships,
+} = {}) {
   const reviews = JSON.parse(
     fs.readFileSync(path.join(__dirname, 'data', 'reviews.json'), 'utf8'),
   ).reviews;
@@ -96,8 +105,10 @@ async function seedDatabase() {
     fs.readFileSync(path.join(__dirname, 'data', 'dealerships.json'), 'utf8'),
   ).dealerships;
 
-  await Promise.all([Reviews.deleteMany({}), Dealerships.deleteMany({})]);
-  await Promise.all([Reviews.insertMany(reviews), Dealerships.insertMany(dealerships)]);
+  await Promise.all([
+    seedCollection(ReviewModel, reviews),
+    seedCollection(DealershipModel, dealerships),
+  ]);
 }
 
 async function startServer() {
