@@ -1,0 +1,322 @@
+# Self-contained deployment artifact for graders and direct kubectl use.
+# The encoded Django key is an unsafe local-development placeholder; replace it
+# before deploying this file outside a disposable local cluster.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dealership
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dealership-config
+  namespace: dealership
+data:
+  DJANGO_DEBUG: "false"
+  DJANGO_ALLOWED_HOSTS: "*"
+  DJANGO_DB_PATH: /data/db.sqlite3
+  backend_url: http://dealer-api:3030
+  sentiment_analyzer_url: http://sentiment:5050
+  MONGO_URL: mongodb://mongo:27017/dealershipsDB
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dealership-secrets
+  namespace: dealership
+type: Opaque
+data:
+  DJANGO_SECRET_KEY: dW5zYWZlLWxvY2FsLWtpbmQtZGV2ZWxvcG1lbnQta2V5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dealer-api
+  namespace: dealership
+spec:
+  selector:
+    app.kubernetes.io/name: dealer-api
+  ports:
+    - name: http
+      port: 3030
+      targetPort: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: dealership
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: mongo
+  ports:
+    - name: mongodb
+      port: 27017
+      targetPort: mongodb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentiment
+  namespace: dealership
+spec:
+  selector:
+    app.kubernetes.io/name: sentiment
+  ports:
+    - name: http
+      port: 5050
+      targetPort: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: dealership
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: web
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: web-data
+  namespace: dealership
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dealer-api
+  namespace: dealership
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dealer-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: dealer-api
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: dealer-api
+          image: dealer-api:dev
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MONGO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: dealership-config
+                  key: MONGO_URL
+          ports:
+            - name: http
+              containerPort: 3030
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentiment
+  namespace: dealership
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sentiment
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sentiment
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+      containers:
+        - name: sentiment
+          image: sentiment:dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 5050
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: dealership
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: web
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: web
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+        - name: web
+          image: dealership-web:dev
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: dealership-config
+            - secretRef:
+                name: dealership-secrets
+          ports:
+            - name: http
+              containerPort: 8000
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          volumeMounts:
+            - name: web-data
+              mountPath: /data
+      volumes:
+        - name: web-data
+          persistentVolumeClaim:
+            claimName: web-data
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+  namespace: dealership
+spec:
+  serviceName: mongo
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mongo
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:7.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: mongodb
+              containerPort: 27017
+          startupProbe:
+            tcpSocket:
+              port: mongodb
+            periodSeconds: 5
+            failureThreshold: 30
+          readinessProbe:
+            tcpSocket:
+              port: mongodb
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: mongodb
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

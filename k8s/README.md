@@ -43,6 +43,17 @@ Open <http://127.0.0.1:8000> while port forwarding is running. A Kind cluster
 does not provision an external address for the `LoadBalancer` service, so a
 pending external IP is expected locally.
 
+For grading systems that require one literal deployment artifact, the repository
+root also contains `deployment.yml`. After building and loading the local images
+as shown above, deploy that equivalent manifest with:
+
+```bash
+kubectl apply -f deployment.yml
+```
+
+The Kustomize files remain the maintainable source for environment-specific
+configuration.
+
 The example secret is suitable only for local development. Replace its value
 with a strong, unique key before deploying anywhere else. `secrets.env` is
 ignored by Git and must not be committed.
@@ -78,6 +89,52 @@ The Django deployment intentionally has one replica and uses the `Recreate`
 strategy because it stores SQLite data on a single-writer volume. MongoDB is a
 single-node StatefulSet for this capstone deployment; production environments
 should use an appropriately backed-up and replicated database service.
+
+## Deploy the sentiment analyzer to IBM Code Engine
+
+Install the IBM Cloud CLI and Code Engine plugin, then authenticate. From the
+repository root, create or select a Code Engine project and deploy the existing
+sentiment Dockerfile directly from its local source directory:
+
+```bash
+ibmcloud login --sso
+ibmcloud target -r us-south
+ibmcloud plugin install code-engine
+
+# Run project creation once. If it already exists, only select it.
+ibmcloud ce project create --name dealership
+ibmcloud ce project select --name dealership
+
+ibmcloud ce app create \
+  --name dealership-sentiment \
+  --build-source server/djangoapp/microservices \
+  --strategy dockerfile \
+  --port 5050 \
+  --min-scale 1
+```
+
+Get the public application URL and verify the required endpoint:
+
+```bash
+SENTIMENT_URL="$(
+  ibmcloud ce app get --name dealership-sentiment --output url
+)"
+echo "${SENTIMENT_URL}"
+curl --fail "${SENTIMENT_URL}/analyze/Fantastic%20services"
+```
+
+The test response must contain `{"sentiment":"positive"}`. Configure Django's
+`sentiment_analyzer_url` environment variable with `SENTIMENT_URL`; Django adds
+the `/analyze/<text>` path itself. For example, to test the Code Engine service
+from the current Kubernetes deployment:
+
+```bash
+kubectl set env deployment/web -n dealership \
+  sentiment_analyzer_url="${SENTIMENT_URL}"
+kubectl rollout status deployment/web -n dealership --timeout=5m
+```
+
+Reapplying `k8s/base` restores the cluster-local sentiment service URL.
 
 ## Inspect and troubleshoot
 
