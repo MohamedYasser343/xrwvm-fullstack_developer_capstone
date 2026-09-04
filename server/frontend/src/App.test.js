@@ -11,14 +11,14 @@ test("the register route shows the complete sign-up form", () => {
     </MemoryRouter>,
   );
 
-  expect(screen.queryByRole("heading", { name: "Create account" })).not.toBeNull();
-  expect(screen.queryByLabelText("Username")).not.toBeNull();
-  expect(screen.queryByLabelText("First Name")).not.toBeNull();
-  expect(screen.queryByLabelText("Last Name")).not.toBeNull();
-  expect(screen.queryByLabelText("Email")).not.toBeNull();
-  expect(screen.queryByLabelText("Password", { selector: "#password" })).not.toBeNull();
-  expect(screen.queryByLabelText("Confirm Password")).not.toBeNull();
-  expect(screen.queryByRole("button", { name: "Register" })).not.toBeNull();
+  expect(screen.getByRole("heading", { name: "Create account" })).not.toBeNull();
+  expect(screen.getByLabelText("Username")).not.toBeNull();
+  expect(screen.getByLabelText("First Name")).not.toBeNull();
+  expect(screen.getByLabelText("Last Name")).not.toBeNull();
+  expect(screen.getByLabelText("Email")).not.toBeNull();
+  expect(screen.getByLabelText("Password", { selector: "#password" })).not.toBeNull();
+  expect(screen.getByLabelText("Confirm Password")).not.toBeNull();
+  expect(screen.getByRole("button", { name: "Register" })).not.toBeNull();
 });
 
 test("the dealerships route shows the dealer directory", async () => {
