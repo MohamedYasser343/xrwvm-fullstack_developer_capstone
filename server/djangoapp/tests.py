@@ -1,5 +1,6 @@
-from pathlib import Path
 import json
+import os
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 import requests
@@ -12,6 +13,22 @@ from django.apps import apps
 from django.test import SimpleTestCase, TestCase
 
 from . import restapis
+from .config import env_bool, env_list
+
+
+class EnvironmentConfigurationTests(SimpleTestCase):
+    @patch.dict(os.environ, {"FEATURE_FLAG": "true"}, clear=False)
+    def test_env_bool_accepts_true(self):
+        self.assertTrue(env_bool("FEATURE_FLAG"))
+
+    @patch.dict(os.environ, {"HOSTS": "app.example, api.example"}, clear=False)
+    def test_env_list_splits_and_strips_values(self):
+        self.assertEqual(env_list("HOSTS"), ["app.example", "api.example"])
+
+    @patch.dict(os.environ, {}, clear=True)
+    def test_environment_helpers_use_defaults(self):
+        self.assertFalse(env_bool("FEATURE_FLAG"))
+        self.assertEqual(env_list("HOSTS", ["localhost"]), ["localhost"])
 
 
 class StaticPageConfigurationTests(SimpleTestCase):

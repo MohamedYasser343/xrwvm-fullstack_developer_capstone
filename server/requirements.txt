@@ -1,5 +1,6 @@
 requests
 Django
 Pillow
-gunicorn
+gunicorn==26.2.0
 python-dotenv
+whitenoise==6.12.0
