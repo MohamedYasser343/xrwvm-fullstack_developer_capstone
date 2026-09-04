@@ -97,6 +97,9 @@ repository root, create or select a Code Engine project and deploy the existing
 sentiment Dockerfile directly from its local source directory:
 
 ```bash
+curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+ibmcloud version
+
 ibmcloud login --sso
 ibmcloud target -r us-south
 ibmcloud plugin install code-engine
