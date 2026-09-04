@@ -1,0 +1,2 @@
+$ curl --silent --show-error --cookie-jar cookies.txt --request POST http://127.0.0.1:8000/djangoapp/login --header 'Content-Type: application/json' --data '{"userName":"capstone_grader","password":"BestCars2026!"}'
+{"userName": "capstone_grader", "status": "Authenticated"}

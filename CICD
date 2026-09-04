@@ -1,0 +1,48 @@
+$ gh run view 33903127102 -R MohamedYasser343/xrwvm-fullstack_developer_capstone
+
+✓ main Lint Code · 33903127102
+Triggered via push about 10 minutes ago
+
+JOBS
+✓ Lint JavaScript Files in 25s (ID 101121641590)
+✓ Lint Python Files in 11s (ID 101121641804)
+
+For more information about a job, try: gh run view --job=<job-id>
+View this run on GitHub: https://github.com/MohamedYasser343/xrwvm-fullstack_developer_capstone/actions/runs/33903127102
+$ gh run view --job 101121641590 -R MohamedYasser343/xrwvm-fullstack_developer_capstone
+
+✓ main Lint Code · 33903127102
+Triggered via push about 10 minutes ago
+
+✓ Lint JavaScript Files in 25s (ID 101121641590)
+  ✓ Set up job
+  ✓ Check out repository
+  ✓ Set up Node.js
+  ✓ Install React dependencies
+  ✓ Lint React files
+  ✓ Install Express dependencies
+  ✓ Lint Express files
+  ✓ Post Set up Node.js
+  ✓ Post Check out repository
+  ✓ Complete job
+
+To see the full job log, try: gh run view --log --job=101121641590
+View this run on GitHub: https://github.com/MohamedYasser343/xrwvm-fullstack_developer_capstone/actions/runs/33903127102
+
+$ gh run view --job 101121641804 -R MohamedYasser343/xrwvm-fullstack_developer_capstone
+
+✓ main Lint Code · 33903127102
+Triggered via push about 10 minutes ago
+
+✓ Lint Python Files in 11s (ID 101121641804)
+  ✓ Set up job
+  ✓ Check out repository
+  ✓ Set up Python
+  ✓ Install Flake8
+  ✓ Lint Python files
+  ✓ Post Set up Python
+  ✓ Post Check out repository
+  ✓ Complete job
+
+To see the full job log, try: gh run view --log --job=101121641804
+View this run on GitHub: https://github.com/MohamedYasser343/xrwvm-fullstack_developer_capstone/actions/runs/33903127102

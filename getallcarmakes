@@ -1,0 +1,13 @@
+$ curl --silent --show-error http://127.0.0.1:8000/djangoapp/get_cars
+{
+    "CarModels": [
+        {
+            "CarModel": "Pathfinder",
+            "CarMake": "Nissan"
+        },
+        {
+            "CarModel": "Camry",
+            "CarMake": "Toyota"
+        }
+    ]
+}

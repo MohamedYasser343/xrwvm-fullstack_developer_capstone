@@ -88,6 +88,19 @@ class StaticPageRouteTests(SimpleTestCase):
         self.assertContains(response, 'href="mailto:', count=3)
         self.assertContains(response, "@bestcars.example")
 
+    def test_about_page_uses_distinct_local_team_portraits(self):
+        response = self.client.get("/about")
+        static_directory = Path(settings.BASE_DIR) / "frontend" / "static"
+
+        for filename in (
+            "maya-thompson.png",
+            "daniel-kim.png",
+            "sofia-martinez.png",
+        ):
+            with self.subTest(filename=filename):
+                self.assertContains(response, f'src="/static/{filename}"')
+                self.assertTrue((static_directory / filename).is_file())
+
     def test_contact_page_lists_contact_methods_and_business_hours(self):
         response = self.client.get("/contact")
 
@@ -95,6 +108,11 @@ class StaticPageRouteTests(SimpleTestCase):
         self.assertContains(response, "hello@bestcars.example")
         self.assertContains(response, "+1 (800) 555-0127")
         self.assertContains(response, "Business hours")
+        self.assertContains(response, 'src="/static/contactus.png"')
+        self.assertContains(
+            response,
+            'class="nav-link active" aria-current="page" href="/contact"',
+        )
 
     def test_react_authentication_pages_use_the_production_client(self):
         for url in ("/login", "/register"):

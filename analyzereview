@@ -1,0 +1,4 @@
+$ curl --silent --show-error 'http://127.0.0.1:5050/analyze/Fantastic%20services'
+{
+    "sentiment": "positive"
+}

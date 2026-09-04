@@ -1,0 +1,2 @@
+$ curl --silent --show-error --cookie cookies.txt http://127.0.0.1:8000/djangoapp/logout
+{"status": "Logged out"}
